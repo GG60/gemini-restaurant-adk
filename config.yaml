@@ -1,0 +1,11 @@
+version: 1.0
+agents:
+  client:
+    module: agents.client_agent
+    entrypoint: client_agent
+  restaurant:
+    module: agents.restaurant_agent
+    entrypoint: restaurant_agent
+
+flows:
+  default: [client, restaurant]
