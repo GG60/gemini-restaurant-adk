@@ -1,4 +1,4 @@
-from google.adk.agents.llm_agent import Agent 
+from .restaurant_agent import RestaurantAgent
 # -----------------------------------------------
 # 1. تعريف أداة معالجة الطلب (Tool/Function)
 # -----------------------------------------------
@@ -41,7 +41,7 @@ def process_food_order(item: str, quantity: int) -> str:
 # 2. تعريف وكيل المطعم (Restaurant Agent)
 # -----------------------------------------------
 
-restaurant_agent = Agent(
+restaurant_agent = RestaurantAgent(
     model='gemini-2.5-flash',
     name='RestaurantAgent',
     description='Handles food order processing and menu inquiries for Abdullah_res in Riyadh.',

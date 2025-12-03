@@ -1,10 +1,10 @@
-from google.adk.agents.llm_agent import Agent
+from .restaurant_agent import RestaurantAgent
 
 # -----------------------------------------------
 # تعريف وكيل العميل (Client Agent)
 # -----------------------------------------------
 
-client_agent = Agent(
+client_agent = RestaurantAgent(
     model='gemini-2.5-flash',
     name='ClientAgent',
     description='Represents a customer placing a food order.',

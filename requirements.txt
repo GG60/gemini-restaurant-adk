@@ -1,2 +1,4 @@
 streamlit
 requests
+google-genai==1.52.0
+adk==0.0.5
