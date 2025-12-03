@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 
 # (1) هذا الرابط سيعمل فقط للاختبار المحلي.
-# يجب تغييره لاحقًا إلى رابط Cloud Run (مثل https://abdullah-res-agent-xyz.a.run.app/run)
-API_URL = "http://localhost:8000/run" 
+
+API_URL = "https://your-agent-name-xyz.a.run.app/run"
 
 st.set_page_config(page_title="🤖 مطعم ADK", layout="wide")
 st.title("مطعم ADK الذكي 🍔")
