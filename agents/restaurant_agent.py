@@ -39,11 +39,14 @@ class RestaurantAgent:
         self.client = client
 
     def run(self, message):
+        """
+        يشغل وكيل المطعم باستخدام Gemini
+        """
         try:
+            # إزالة tools
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=f"{self.instruction}\n\nرسالة العميل: {message}",
-                tools=[process_food_order]
+                contents=f"{self.instruction}\n\nرسالة العميل: {message}"
             )
             return response.text
         except Exception as e:
