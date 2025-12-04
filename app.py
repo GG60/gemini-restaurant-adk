@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from google.adk.client import Client
+from adk.client import Client
 from agents.client_agent import ClientAgent # يجب أن يكون هذا الاستيراد صحيحاً بعد إصلاح Git
 
 # يجب توفير مفتاح Gemini API
