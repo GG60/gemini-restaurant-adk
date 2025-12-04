@@ -1,13 +1,6 @@
 from google import genai
 
-# ---------------------------------------------------
-# 1. أداة معالجة الطلب (Tool)
-# ---------------------------------------------------
 def process_food_order(item: str, quantity: int) -> str:
-    """
-    Process a food order and provide total price and time.
-    """
-    
     menu = {
         "pizza": {"price": 45, "time": "30 دقيقة"},
         "burger": {"price": 30, "time": "20 دقيقة"},
@@ -20,23 +13,23 @@ def process_food_order(item: str, quantity: int) -> str:
         None
     )
 
-    if found_item:
-        unit_price = menu[found_item]["price"]
-        total = unit_price * quantity
-        time = menu[found_item]["time"]
-
-        return (
-            f"تم تأكيد طلب {quantity} × {found_item}. "
-            f"السعر الإجمالي: {total} ريال سعودي. "
-            f"وقت التحضير المتوقع: {time}."
-        )
-    else:
+    if not found_item:
         return f"عذراً، '{item}' غير متوفر حالياً في القائمة."
 
+    if quantity <= 0:
+        return "❌ الكمية يجب أن تكون أكبر من صفر."
 
-# ---------------------------------------------------
-# 2. تعريف وكيل المطعم RestaurantAgent (Class)
-# ---------------------------------------------------
+    unit_price = menu[found_item]["price"]
+    total = unit_price * quantity
+    time = menu[found_item]["time"]
+
+    return (
+        f"تم تأكيد طلب {quantity} × {found_item}. "
+        f"السعر الإجمالي: {total} ريال سعودي. "
+        f"وقت التحضير المتوقع: {time}."
+    )
+
+
 class RestaurantAgent:
     def __init__(self, model, name, description, instruction, client):
         self.model = model
@@ -46,12 +39,12 @@ class RestaurantAgent:
         self.client = client
 
     def run(self, message):
-        """
-        يشغل وكيل المطعم باستخدام Gemini
-        """
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=f"{self.instruction}\n\nرسالة العميل: {message}",
-            tools=[process_food_order]
-        )
-        return response.text
+        try:
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=f"{self.instruction}\n\nرسالة العميل: {message}",
+                tools=[process_food_order]
+            )
+            return response.text
+        except Exception as e:
+            return f"❌ خطأ عند تشغيل الوكيل: {e}"
