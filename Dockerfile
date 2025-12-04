@@ -22,6 +22,7 @@ WORKDIR /app
 
 # Expose port (ADK default port)
 EXPOSE 8000
-
+ENV PORT=8000
 # Command to run the ADK Agent service (the standard ADK command)
+# هذا الأمر يبدأ الخادم الصحيح ويفتح المنفذ 8000
 CMD ["python", "-m", "adk", "run"]

@@ -1,9 +1,9 @@
 version: 1.0
 agents:
-  client:
+  - name: client
     module: agents.client_agent
     entrypoint: client_agent
-  restaurant:
+  - name: restaurant
     module: agents.restaurant_agent
     entrypoint: restaurant_agent
 
