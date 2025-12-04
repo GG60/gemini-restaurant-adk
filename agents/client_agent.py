@@ -1,15 +1,17 @@
 from agents.restaurant_agent import RestaurantAgent
 
-# -----------------------------------------------
-# تعريف وكيل العميل (Client Agent)
-# -----------------------------------------------
+class ClientAgent:
+    def __init__(self, client):
+        self.agent = RestaurantAgent(
+            model="gemini-2.5-flash",
+            name="ClientAgent",
+            description="Client requesting food orders.",
+            instruction=(
+                "أنت عميل تطلب طعاماً من وكيل المطعم. "
+                "اكتب الطلب بشكل واضح وبالعربية."
+            ),
+            client=client
+        )
 
-client_agent = RestaurantAgent(
-    model='gemini-2.5-flash',
-    name='ClientAgent',
-    description='Represents a customer placing a food order.',
-    instruction=(
-        "You are a hungry customer looking to order food from the restaurant agent. "
-        "Your goal is to clearly request an item and the quantity. You must speak Arabic."
-    )
-)
+    def run(self, message):
+        return self.agent.run(message).output

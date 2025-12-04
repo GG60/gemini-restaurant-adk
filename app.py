@@ -1,33 +1,36 @@
 import streamlit as st
 import os
-from google.adk.client import Client
-from agents.client_agent import ClientAgent # يجب أن يكون هذا الاستيراد صحيحاً بعد إصلاح Git
-from agents.restaurant_agent import RestaurantAgent
-# يجب توفير مفتاح Gemini API
+from google import genai
+from agents.client_agent import ClientAgent
+
+# --- إعداد صفحة Streamlit ---
+st.set_page_config(page_title="مطعم عبدالله_res", layout="wide")
+st.title("نظام المطعم الذكي 🍽️")
+st.caption("🎛️ Gemini + ADK + Streamlit Example")
+
+# --- التحقق من وجود مفتاح API ---
 if "GEMINI_API_KEY" not in os.environ:
-    st.error("⚠️ يرجى تعيين متغير بيئة GEMINI_API_KEY لتشغيل التطبيق.")
+    st.error("⚠️ يرجى إضافة GEMINI_API_KEY في Secrets داخل Streamlit Cloud")
     st.stop()
 
-# 1. تهيئة العميل (Client) والوكيل (Agent)
-agent_client = Client(ClientAgent, gemini_api_key=os.environ["GEMINI_API_KEY"])
+# --- إنشاء عميل Gemini ---
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+agent_client = ClientAgent(client)
 
-st.set_page_config(page_title="🤖 مطعم ADK", layout="wide")
-st.title("مطعم ADK الذكي 🍔")
-st.caption("يعمل هذا التطبيق بوكيل ADK مباشرة على Streamlit Cloud.")
+# --- إدخال المستخدم ---
+user_input = st.text_input("اكتب طلبك هنا 👇", key="user_input")
 
-user_input = st.text_input("أدخل طلبك هنا، مثال: أريد طلب برجر وبيتزا", key="user_input")
+# --- زر التنفيذ ---
+if st.button("إرسال الطلب 🚀"):
+    if not user_input:
+        st.warning("أدخل طلبًا أولاً.")
+    else:
+        st.info(f"🔎 طلب العميل: {user_input}")
 
-if st.button("أرسل الطلب"):
-    if user_input:
-        st.info(f"إرسال الطلب: {user_input}")
-        
         try:
-            # تشغيل الوكيل مباشرة عبر كود بايثون
             response = agent_client.run(user_input)
-            
-            st.success("✅ استجابة الوكيل:")
-            # افتراض أن الاستجابة تحتوي على مفتاح 'output'
-            st.markdown(f"**{response.output}**") 
+            st.success("🎉 استجابة الوكيل:")
+            st.markdown(f"**{response}**")
 
         except Exception as e:
-            st.error(f"❌ خطأ في تشغيل الوكيل: {e}")
+            st.error(f"❌ حدث خطأ: {e}")

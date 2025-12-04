@@ -1,54 +1,57 @@
-from .restaurant_agent import RestaurantAgent
-# -----------------------------------------------
-# 1. تعريف أداة معالجة الطلب (Tool/Function)
-# -----------------------------------------------
+from google import genai
 
+# ---------------------------------------------------
+# 1. أداة معالجة الطلب (Tool)
+# ---------------------------------------------------
 def process_food_order(item: str, quantity: int) -> str:
     """
-    Processes a food order, checks availability, and confirms the price in SAR.
-    
-    Args:
-        item: The name of the food item (e.g., 'Pizza', 'Burger').
-        quantity: The number of items to order.
-        
-    Returns:
-        A confirmation message with the calculated total price in SAR.
+    Process a food order and provide total price and time.
     """
     
     menu = {
-        "pizza": {"price": 45, "time": "30 minutes"},
-        "burger": {"price": 30, "time": "20 minutes"},
-        "كابسة": {"price": 60, "time": "45 minutes"}
+        "pizza": {"price": 45, "time": "30 دقيقة"},
+        "burger": {"price": 30, "time": "20 دقيقة"},
+        "كبسة": {"price": 60, "time": "45 دقيقة"},
     }
-    
-    item_lower = item.lower().strip()
-    found_item = next((k for k in menu if k in item_lower or item_lower in k.lower()), None)
-    
+
+    item_clean = item.strip().lower()
+    found_item = next(
+        (name for name in menu if name.lower() in item_clean or item_clean in name.lower()),
+        None
+    )
+
     if found_item:
         unit_price = menu[found_item]["price"]
-        estimated_time = menu[found_item]["time"]
-        total_price = unit_price * quantity
-        
+        total = unit_price * quantity
+        time = menu[found_item]["time"]
+
         return (
-            f"Restaurant Agent: Order for {quantity} x {found_item} confirmed. "
-            f"Total Price: {total_price} SAR. "
-            f"Estimated preparation time: {estimated_time}."
+            f"تم تأكيد طلب {quantity} × {found_item}. "
+            f"السعر الإجمالي: {total} ريال سعودي. "
+            f"وقت التحضير المتوقع: {time}."
         )
     else:
-        return f"Restaurant Agent: عذراً، '{item}' غير متوفرة. قائمة طعامنا تشمل البيتزا، البرجر، والكابسة."
+        return f"عذراً، '{item}' غير متوفر حالياً في القائمة."
 
-# -----------------------------------------------
-# 2. تعريف وكيل المطعم (Restaurant Agent)
-# -----------------------------------------------
 
-restaurant_agent = RestaurantAgent(
-    model='gemini-2.5-flash',
-    name='RestaurantAgent',
-    description='Handles food order processing and menu inquiries for Abdullah_res in Riyadh.',
-    instruction=(
-        "You are the professional order processor for Abdullah_res in Riyadh. "
-        "Your responses must be in Arabic, polite, and clearly state the prices in SAR. "
-        "Use the 'process_food_order' tool whenever the client requests an item and quantity."
-    ),
-    tools=[process_food_order], 
-)
+# ---------------------------------------------------
+# 2. تعريف وكيل المطعم RestaurantAgent (Class)
+# ---------------------------------------------------
+class RestaurantAgent:
+    def __init__(self, model, name, description, instruction, client):
+        self.model = model
+        self.name = name
+        self.description = description
+        self.instruction = instruction
+        self.client = client
+
+    def run(self, message):
+        """
+        يشغل وكيل المطعم باستخدام Gemini
+        """
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=f"{self.instruction}\n\nرسالة العميل: {message}",
+            tools=[process_food_order]
+        )
+        return response.text
