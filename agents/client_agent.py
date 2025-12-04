@@ -16,4 +16,4 @@ class ClientAgent:
     def run(self, message):
         if not message.strip():
             return "❌ لا يمكن إرسال رسالة فارغة."
-        return self.agent.run(message).output
+        return self.agent.run(message)
