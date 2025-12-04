@@ -1,4 +1,4 @@
-from .restaurant_agent import RestaurantAgent
+from agents.restaurant_agent import RestaurantAgent
 
 # -----------------------------------------------
 # تعريف وكيل العميل (Client Agent)

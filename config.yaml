@@ -1,10 +1,10 @@
 version: 1.0
 agents:
   - name: client
-    module: agents.client_agent
+    module: agents.client_agent # 👈 مسار مباشر
     entrypoint: client_agent
   - name: restaurant
-    module: agents.restaurant_agent
+    module: agents.restaurant_agent # 👈 مسار مباشر
     entrypoint: restaurant_agent
 
 flows:

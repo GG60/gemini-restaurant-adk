@@ -1,8 +1,8 @@
 import streamlit as st
 import os
 from google.adk.client import Client
-from .agents.client_agent import ClientAgent # يجب أن يكون هذا الاستيراد صحيحاً بعد إصلاح Git
-
+from agents.client_agent import ClientAgent # يجب أن يكون هذا الاستيراد صحيحاً بعد إصلاح Git
+from agents.restaurant_agent import RestaurantAgent
 # يجب توفير مفتاح Gemini API
 if "GEMINI_API_KEY" not in os.environ:
     st.error("⚠️ يرجى تعيين متغير بيئة GEMINI_API_KEY لتشغيل التطبيق.")
