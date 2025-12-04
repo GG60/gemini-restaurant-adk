@@ -18,7 +18,10 @@ client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 agent_client = ClientAgent(client)
 
 # --- إدخال المستخدم ---
+
 user_input = st.text_input("اكتب طلبك هنا 👇", key="user_input")
+if len(user_input) > 500:
+    st.warning("يرجى تقليل طول الطلب إلى 500 حرف كحد أقصى.")
 
 # --- زر التنفيذ ---
 if st.button("إرسال الطلب 🚀"):
