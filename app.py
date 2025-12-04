@@ -1,29 +1,33 @@
 import streamlit as st
-import requests
-# (1) هذا الرابط سيعمل فقط للاختبار المحلي.
-API_URL = "https://abdullah-res-agent-xyz.a.run.app/run"
+import os
+from google.adk.client import Client
+from agents.client_agent import ClientAgent # يجب أن يكون هذا الاستيراد صحيحاً بعد إصلاح Git
+
+# يجب توفير مفتاح Gemini API
+if "GEMINI_API_KEY" not in os.environ:
+    st.error("⚠️ يرجى تعيين متغير بيئة GEMINI_API_KEY لتشغيل التطبيق.")
+    st.stop()
+
+# 1. تهيئة العميل (Client) والوكيل (Agent)
+agent_client = Client(ClientAgent, gemini_api_key=os.environ["GEMINI_API_KEY"])
+
 st.set_page_config(page_title="🤖 مطعم ADK", layout="wide")
 st.title("مطعم ADK الذكي 🍔")
-st.caption("يتصل هذا التطبيق بوكيل (Agent) يعمل على خادم منفصل.")
-# ⚠️ ملاحظة: يجب أن يحتوي ملف requirements.txt على مكتبة 'requests' أيضًا.
+st.caption("يعمل هذا التطبيق بوكيل ADK مباشرة على Streamlit Cloud.")
+
 user_input = st.text_input("أدخل طلبك هنا، مثال: أريد طلب برجر وبيتزا", key="user_input")
+
 if st.button("أرسل الطلب"):
     if user_input:
         st.info(f"إرسال الطلب: {user_input}")
+        
         try:
-            # إرسال طلب HTTP إلى الوكيل الذي يعمل في الخلفية (على Cloud Run لاحقاً)
-            response = requests.post(
-                API_URL,
-                json={"input": user_input}
-            )
-            # عرض الاستجابة
-            if response.status_code == 200:
-                result = response.json()
-                st.success("✅ استجابة الوكيل:")
-                # افتراض أن الاستجابة تحتوي على مفتاح 'output'
-                st.markdown(f"**{result.get('output', 'لا توجد استجابة')}**") 
-            else:
-                st.error(f"❌ خطأ في الاتصال بالوكيل: {response.status_code}")
-                st.write(response.text)
-        except requests.exceptions.ConnectionError:
-            st.error("❌ فشل الاتصال بالخادم. تأكد من أن الوكيل يعمل على Cloud Run.")
+            # تشغيل الوكيل مباشرة عبر كود بايثون
+            response = agent_client.run(user_input)
+            
+            st.success("✅ استجابة الوكيل:")
+            # افتراض أن الاستجابة تحتوي على مفتاح 'output'
+            st.markdown(f"**{response.output}**") 
+
+        except Exception as e:
+            st.error(f"❌ خطأ في تشغيل الوكيل: {e}")
