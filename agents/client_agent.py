@@ -7,7 +7,7 @@ class ClientAgent:
             name="ClientAgent",
             description="Client requesting food orders.",
             instruction=(
-                "أنت عميل تطلب طعاماً من وكيل المطعم. "
+               
                 "اكتب الطلب بشكل واضح وبالعربية."
             ),
             client=client
